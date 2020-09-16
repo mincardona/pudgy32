@@ -3,7 +3,6 @@
 #include <tl/expected.hpp>
 #include <iostream>
 
-int main(int [[maybe_unused]] argc, char** [[maybe_unused]] argv) {
-    std::cout << "p32test version " << PUDGY32_VERSION_STR << "\n";
-    std::cout << "dummy = " << pudgy32::dummy << "\n";
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
+    std::cout << "p32test version " << PUDGY32_VERSION_STR << "\n";;
 }
