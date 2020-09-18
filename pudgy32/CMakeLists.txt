@@ -1,9 +1,9 @@
 set(IncludeDir "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 set(SourceDir "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 
-set(IncludeFiles "pudgy32/pudgy32.hpp")
+set(IncludeFiles "pudgy32/expected.hpp" "pudgy32/storage_interface.hpp")
 list(TRANSFORM IncludeFiles PREPEND ${IncludeDir})
-set(SourceFiles "pudgy32.cpp")
+set(SourceFiles "storage_interface.cpp")
 list(TRANSFORM SourceFiles PREPEND ${SourceDir})
 set(TemplateFileStem pudgy32_config)
 
@@ -22,6 +22,11 @@ target_include_directories(pudgy32 PUBLIC "${SOURCE_DIR}/include")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+if(MSVC)
+    target_compile_options(pudgy32 PRIVATE /W4 /WX)
+else()
+    target_compile_options(pudgy32 PRIVATE -Wall -Wextra -pedantic -Werror)
+endif()
 
 # include configured files from ${PROJECT_BINARY_DIR}
 target_include_directories(pudgy32 PUBLIC "${IncludeDir}" PUBLIC "${PROJECT_BINARY_DIR}")
