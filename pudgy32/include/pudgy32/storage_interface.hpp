@@ -18,7 +18,7 @@ enum class SeekType {
 };
 
 enum class SeekDirection {
-    BACKWARDS, FORWARDS
+    FORWARDS, BACKWARDS
 };
 
 class StorageInterface {
@@ -26,18 +26,18 @@ public:
     virtual ~StorageInterface() noexcept;
 
     /// Gets the size of the storage space in bytes
-    virtual expected<std::size_t, std::error_code> size() = 0;
+    virtual auto size() -> expected<std::size_t, std::error_code> = 0;
 
-    /// Gets the current position in the storage space.
-    virtual expected<std::size_t, std::error_code> tell() = 0;
+    /// Gets the current position in the storage space
+    virtual auto tell() -> expected<std::size_t, std::error_code> = 0;
 
     /// Seeks to a new position in the storage space.
     /// Note that the "sign" of the offset is encoded in the seek direction, so
     /// the offset itself is unsigned.
-    virtual std::error_code
-        seek(SeekType type, SeekDirection direction, std::size_t offset) = 0;
+    virtual auto seek(SeekType type, SeekDirection direction, std::size_t offset)
+        -> expected<void, std::error_code> = 0;
     // inline shorthand overload
-    std::error_code seek(std::size_t offset) {
+    auto seek(std::size_t offset) -> expected<void, std::error_code> {
         return this->seek(SeekType::SET, SeekDirection::FORWARDS, offset);
     }
 
@@ -47,13 +47,13 @@ public:
     /// After each successful call to this function, the storage position is
     /// advanced to point to the next byte not yet read. If this call fails, the
     /// storage position is unspecified.
-    virtual expected<std::size_t, std::error_code>
-        read_some(void* buf, std::size_t count) = 0;
+    virtual auto read_some(void* buf, std::size_t count)
+        -> expected<std::size_t, std::error_code> = 0;
     /// Reads count bytes from the storage space and writes them to buf.
     /// Returns an error if unable to read the number of bytes requested.
     /// A default implementation is provided which repeatedly calls read_some.
-    virtual expected<void, std::error_code>
-        read_fill(void* buf, std::size_t count);
+    virtual auto read_fill(void* buf, std::size_t count)
+        -> expected<void, std::error_code>;
 
     /// Writes at most count byes from buf to the storage space.
     /// Returns the number of bytes written (should be greater than 0 and less
@@ -61,11 +61,15 @@ public:
     /// After each successful call to this function, the storage position is
     /// advanced to point to the next byte not yet written. If this call fails,
     /// the storage position is unspecified.
-    virtual expected<std::size_t, std::error_code>
-        write_some(const void* buf, std::size_t count) = 0;
+    virtual auto write_some(const void* buf, std::size_t count)
+        -> expected<std::size_t, std::error_code> = 0;
     // a default implementation is provided
-    virtual expected<void, std::error_code>
-        write_fill(const void* buf, std::size_t count);
+    virtual auto write_fill(const void* buf, std::size_t count)
+        -> expected<void, std::error_code>;
+
+    /// Forces any buffered/pending operations to the underlying device to
+    /// whatever extent is possible.
+    virtual auto flush() -> expected<void, std::error_code>;
 };
 
 }

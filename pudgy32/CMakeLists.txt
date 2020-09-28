@@ -1,9 +1,9 @@
 set(IncludeDir "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 set(SourceDir "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 
-set(IncludeFiles "pudgy32/expected.hpp" "pudgy32/storage_interface.hpp")
+set(IncludeFiles "pudgy32/expected.hpp" "pudgy32/storage_interface.hpp" "pudgy32/filesystem_interface.hpp")
 list(TRANSFORM IncludeFiles PREPEND ${IncludeDir})
-set(SourceFiles "storage_interface.cpp")
+set(SourceFiles "storage_interface.cpp" "filesystem_interface.cpp")
 list(TRANSFORM SourceFiles PREPEND ${SourceDir})
 set(TemplateFileStem pudgy32_config)
 
