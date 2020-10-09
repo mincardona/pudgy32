@@ -32,7 +32,7 @@ expected<void, std::error_code>
     StorageInterface::read_fill(void* buf, std::size_t count)
 {
     using namespace std::placeholders;
-    return io_fill_generic<void, unsigned char>(buf, count,
+    return io_fill_generic<void, std::byte>(buf, count,
         std::bind(&StorageInterface::read_some, this, _1, _2));
 }
 
@@ -40,7 +40,7 @@ expected<void, std::error_code>
     StorageInterface::write_fill(const void* buf, std::size_t count)
 {
     using namespace std::placeholders;
-    return io_fill_generic<const void, const unsigned char>(buf, count,
+    return io_fill_generic<const void, const std::byte>(buf, count,
         std::bind(&StorageInterface::write_some, this, _1, _2));
 }
 

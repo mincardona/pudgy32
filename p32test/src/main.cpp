@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cstddef>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -16,16 +17,16 @@ public:
         // SIZE_MAX is not allowed to avoid overflow bugs that I haven't
         // worked through yet
         assert(size < std::numeric_limits<std::size_t>::max());
-        buffer_ = std::make_unique<unsigned char[]>(size);
+        buffer_ = std::make_unique<std::byte[]>(size);
     }
 
     virtual ~OwningMemoryStorage() noexcept {};
 
-    unsigned char* memory_set() {
+    std::byte* memory_set() {
         return buffer_.get();
     }
 
-    unsigned char* memory_cur() {
+    std::byte* memory_cur() {
         return this->memory_set() + offset_;
     }
 
@@ -127,7 +128,7 @@ private:
 
     std::size_t size_;
     std::size_t offset_;
-    std::unique_ptr<unsigned char[]> buffer_;
+    std::unique_ptr<std::byte[]> buffer_;
 };
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
