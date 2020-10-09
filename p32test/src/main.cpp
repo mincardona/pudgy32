@@ -21,8 +21,12 @@ public:
 
     virtual ~OwningMemoryStorage() noexcept {};
 
-    unsigned char* ptr() {
+    unsigned char* memory_set() {
         return buffer_.get();
+    }
+
+    unsigned char* memory_cur() {
+        return this->memory_set() + offset_;
     }
 
     auto size() -> p32::expected<std::size_t, std::error_code> override {
@@ -52,7 +56,7 @@ public:
         if (direction == p32::SeekDirection::FORWARDS) {
             end_point = add_check_overflow_(start_point, offset);
         } else if (direction == p32::SeekDirection::BACKWARDS) {
-            end_point = subtract_check_overflow_(start_point, offset);
+            end_point = subtract_check_underflow_(start_point, offset);
         } else {
             assert(0);
         }
@@ -73,7 +77,7 @@ public:
             return p32::unexpected{std::make_error_code(std::errc::invalid_argument)};
         }
 
-        std::memcpy(buf, this->ptr(), count);
+        std::memcpy(buf, this->memory_cur(), count);
         offset_ += count;
         return {};
     }
@@ -86,7 +90,7 @@ public:
             return p32::unexpected{std::make_error_code(std::errc::invalid_argument)};
         }
 
-        std::memcpy(this->ptr(), buf, count);
+        std::memcpy(this->memory_cur(), buf, count);
         offset_ += count;
         return {};
     }
@@ -111,7 +115,7 @@ private:
         return sum;
     }
 
-    static auto subtract_check_overflow_(std::size_t a, std::size_t b)
+    static auto subtract_check_underflow_(std::size_t a, std::size_t b)
         -> std::optional<std::size_t>
     {
         auto diff = a - b;
